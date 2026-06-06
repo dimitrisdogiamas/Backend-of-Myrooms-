@@ -4,7 +4,21 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 from models.room import Room
 from schemas.room import RoomResponse
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
+
+
+
+# cors configuration for expo app
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=[
+    "*",
+    ],
+  allow_credentials=False,
+  allow_methods=["*"],
+  allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
@@ -20,3 +34,7 @@ def get_rooms(db: Session = Depends(get_db)):
   rooms = db.query(Room).all()
   # this is the query to get all rooms from the database
   return rooms # this is the response to the client
+
+
+
+
