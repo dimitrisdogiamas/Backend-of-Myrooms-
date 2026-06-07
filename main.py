@@ -5,6 +5,7 @@ from fastapi import Depends
 from models.room import Room
 from schemas.room import RoomResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import HTTPException
 app = FastAPI()
 
 
@@ -34,6 +35,13 @@ def get_rooms(db: Session = Depends(get_db)):
   rooms = db.query(Room).all()
   # this is the query to get all rooms from the database
   return rooms # this is the response to the client
+
+@app.get("/rooms/{room_id}", response_model=RoomResponse)
+def get_room_by_id(room_id: int, db: Session = Depends(get_db)):
+  room = db.query(Room).filter(Room.id == room_id).first()
+  if not room:
+    raise HTTPException(status_code=404, detail="Room not found")
+  return room
 
 
 
